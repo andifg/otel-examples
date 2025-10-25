@@ -3,6 +3,7 @@ name: otel-example-flask
 services:
   exporter:
     image: otel/opentelemetry-collector:latest
+    # image: otel/opentelemetry-collector-contrib:latest
     command: --config=/etc/otel-collector-config.yaml
     volumes:
       - ./exporter-config.yml:/etc/otel-collector-config.yaml
@@ -32,7 +33,7 @@ services:
       - "9090:9090"
 
   loki:
-    image: grafana/loki:2.9.2
+    image: grafana/loki:latest
     ports:
       - "3100:3100"
 
