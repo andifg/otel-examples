@@ -4,11 +4,12 @@ os.environ.setdefault("OTEL_EXPORTER_OTLP_PROTOCOL", "grpc")
 os.environ.setdefault("OTEL_SERVICE_NAME", "dice-roller-fastapi")
 os.environ.setdefault("OTEL_TRACES_EXPORTER", "otlp")
 os.environ.setdefault("OTEL_METRICS_EXPORTER", "otlp")
-os.environ.setdefault("OTEL_LOGS_EXPORTER", "otlp,console")
+os.environ.setdefault("OTEL_LOGS_EXPORTER", "otlp")
 os.environ.setdefault("OTEL_LOG_LEVEL", "DEBUG")
-os.environ.setdefault("OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED", "TRUE")
+os.environ.setdefault("OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED", "true")
 
 import logging
+logging.basicConfig(level=logging.INFO)
 import random
 from contextlib import asynccontextmanager
 # from otel_example.logging_config import setup_logging   
