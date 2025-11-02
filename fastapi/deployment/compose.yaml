@@ -1,0 +1,51 @@
+name: otel-example-fastapi
+
+services:
+  exporter:
+    image: otel/opentelemetry-collector:latest
+    # image: otel/opentelemetry-collector-contrib:latest
+    command: --config=/etc/otel-collector-config.yaml
+    volumes:
+      - ./exporter-config.yml:/etc/otel-collector-config.yaml
+    ports:
+      - 4317:4317
+  jaeger:
+    image: jaegertracing/jaeger:2.0.0
+    command:
+      - "--set=receivers.otlp.protocols.http.endpoint=0.0.0.0:4318"
+      - "--set=receivers.otlp.protocols.grpc.endpoint=0.0.0.0:4317"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      #- "5778:5778"   # Agent configuration
+      - "16686:16686" # Jaeger UI
+      #- "4317:4317"   # OTLP gRPC
+      #- "4318:4318"   # OTLP HTTP
+      #- "14250:14250" # gRPC for collectors
+      #- "14268:14268" # HTTP collector endpoint
+      #- "9411:9411"   # Zipkin compatible endpoint
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+    - ./datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+    depends_on:
+      - prometheus
+      - loki
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
